@@ -12,6 +12,7 @@ using shoppingCart.Models;
 using shoppingCart.Manager;
 using shoppingCart.Models.Customers;
 using shoppingCart.GenericRepository;
+using shoppingCart.Helpers;
 
 namespace shoppingCart.Controllers
 {
@@ -57,6 +58,38 @@ namespace shoppingCart.Controllers
             {
                 _customerRepository = value;
             }
+        }
+
+        [AllowAnonymous]
+        public ActionResult Register()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Register(RegisterViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = new Customer { UserName = model.Email, Email = model.Email };
+                var result = await SecureAuthUserManager.CreateAsync(user, model.Password);
+                if (result.Succeeded)
+                {
+                    string code = await SecureAuthUserManager.GenerateEmailConfirmationTokenAsync(user.Id);
+                    code = System.Web.HttpUtility.UrlEncode(code);
+                    var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
+                   
+                    string mailBody = new MailTools().BodyGenerate(MailTools.EmailType.Account, callbackUrl);
+                    await SecureAuthUserManager.SendEmailAsync(user.Id, "確認您的帳戶", mailBody);
+
+                    return RedirectToAction("Index", "Home");
+                }
+                AddErrors(result);
+            }
+            
+            return View(model);
         }
 
         // GET: /Account/Login
@@ -108,6 +141,28 @@ namespace shoppingCart.Controllers
             }
 
             return View();
+        }
+
+        [AllowAnonymous]
+        public async Task<ActionResult> ConfirmEmail(string userId, string code)
+        {
+            if (userId == null || code == null)
+            {
+                return View("Error");
+            }
+           code = System.Web.HttpUtility.UrlDecode(code);  
+           //外丟要再對應回主鍵
+           var result = await SecureAuthUserManager.ConfirmEmailAsync(int.Parse(userId), code);
+          //if (result.Succeeded)
+          //{
+          //    return RedirectToAction("Index", "Home");
+          //}
+          //else
+          //{
+          //    //轉向錯誤畫面
+          //    return RedirectToAction("Index", "Home");
+          //}
+           return View();
         }
 
         protected override void Dispose(bool disposing)
