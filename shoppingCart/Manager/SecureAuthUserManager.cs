@@ -20,6 +20,24 @@ namespace shoppingCart.Manager
         public static SecureAuthUserManager Create()
         {
             var manager = new SecureAuthUserManager(new SecureAuthUserRepository());
+
+            manager.PasswordHasher = new PasswordHasherManager();
+
+            manager.UserValidator = new UserValidator<Customer,int>(manager)
+            {
+                AllowOnlyAlphanumericUserNames = false,
+                RequireUniqueEmail = false
+            };
+
+            manager.PasswordValidator = new PasswordValidator
+            {
+                RequiredLength = 6,
+                RequireNonLetterOrDigit = false,
+                RequireDigit = false,
+                RequireLowercase = false,
+                RequireUppercase = false,
+            };
+
             return manager;
         }
 
@@ -53,6 +71,33 @@ namespace shoppingCart.Manager
             });
             return task;
         }
+
+       
+        public override async Task<IdentityResult> CreateAsync(Customer user, string password)
+        {
+            //if (Users.Any(u => u.Email.Equals(user.Email, StringComparison.InvariantCultureIgnoreCase)))
+            if (false)
+            {
+                var result = new IdentityResult(new[] { "Email exists" });
+                return result;
+            }
+            Task<IdentityResult> task = Task.Run(() =>
+            {
+                return new IdentityResult();
+            });
+            return await task;
+        }
+
+        private string EncodePassword()
+        {
+            return null;
+        }
+
+        private string DecodePassword()
+        {
+            return null;
+        }
+
 
     }
 }

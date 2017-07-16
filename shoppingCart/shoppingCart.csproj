@@ -214,9 +214,12 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\AESHelper.cs" />
     <Compile Include="Helpers\MailTools.cs" />
     <Compile Include="Interface\IRepository.cs" />
     <Compile Include="Interface\IUserRepository.cs" />
+    <Compile Include="Manager\EmailManager.cs" />
+    <Compile Include="Manager\PasswordHasherManager.cs" />
     <Compile Include="Manager\SecureAuthUserManager.cs" />
     <Compile Include="Manager\SecureAuthUserRepository.cs" />
     <Compile Include="Manager\SecureAuthUserSingInManager.cs" />

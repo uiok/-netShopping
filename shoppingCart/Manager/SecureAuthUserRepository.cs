@@ -39,22 +39,11 @@ namespace shoppingCart.Manager
             return new List<Claim>();
         }
 
-
-
         public void Dispose()
         {
 
         }
-
-        public Task AddClaimAsync(Customer user, Claim claim)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task RemoveClaimAsync(Customer user, Claim claim)
-        {
-            throw new NotImplementedException();
-        }
+        #region IUserStore
 
         public Task CreateAsync(Customer user)
         {
@@ -80,5 +69,22 @@ namespace shoppingCart.Manager
         {
             throw new NotImplementedException();
         }
+        #endregion
+
+        #region IUserClaimStore
+
+        public Task AddClaimAsync(Customer user, Claim claim)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task RemoveClaimAsync(Customer user, Claim claim)
+        {
+            throw new NotImplementedException();
+        }
+
+
+        #endregion
+                   
     }
 }
